@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVM Slack Variables</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        canvas {
+            border: 2px solid #333;
+            background: white;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+        .explanation {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .formula {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Slack Variables trong Soft-Margin SVM</h1>
+        
+        <div class="canvas-container">
+            <canvas id="svmCanvas" width="600" height="400"></canvas>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff4444;"></div>
+                <span>Class -1</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4444ff;"></div>
+                <span>Class +1</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #444; width: 20px; height: 3px; border-radius: 0;"></div>
+                <span>Decision Boundary</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: none; border: 2px dashed #666; width: 20px; height: 3px; border-radius: 0;"></div>
+                <span>Margin Boundaries</span>
+            </div>
+        </div>
+
+        <div class="explanation">
+            <h3>Công thức Slack Variable đúng:</h3>
+            <div class="formula">
+                ξᵢ = max(0, 1 - yᵢ(wᵀxᵢ + b))
+            </div>
+            
+            <h4>Giải thích các trường hợp:</h4>
+            <ul>
+                <li><strong>ξᵢ = 0:</strong> Điểm an toàn (nằm đúng phía, ngoài margin)</li>
+                <li><strong>0 < ξᵢ < 1:</strong> Điểm vi phạm margin nhưng vẫn phân đúng</li>
+                <li><strong>ξᵢ ≥ 1:</strong> Điểm bị phân sai hoàn toàn</li>
+            </ul>
+        </div>
+
+        <div id="pointInfo" style="margin-top: 20px; padding: 10px; background: #fff3cd; border-radius: 5px;">
+            <strong>Click vào các điểm để xem thông tin chi tiết về slack variable!</strong>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('svmCanvas');
+        const ctx = canvas.getContext('2d');
+        const pointInfo = document.getElementById('pointInfo');
+        
+        // Định nghĩa các điểm dữ liệu
+        const points = [
+            // Class +1 (blue)
+            {x: 450, y: 100, label: 1, id: 'A', color: '#4444ff'},
+            {x: 400, y: 150, label: 1, id: 'B', color: '#4444ff'},
+            {x: 350, y: 200, label: 1, id: 'C', color: '#4444ff'}, // Support vector
+            {x: 320, y: 220, label: 1, id: 'D', color: '#4444ff'}, // Vi phạm margin
+            {x: 250, y: 280, label: 1, id: 'E', color: '#4444ff'}, // Bị phân sai
+            
+            // Class -1 (red)  
+            {x: 150, y: 300, label: -1, id: 'F', color: '#ff4444'},
+            {x: 200, y: 250, label: -1, id: 'G', color: '#ff4444'},
+            {x: 250, y: 200, label: -1, id: 'H', color: '#ff4444'}, // Support vector
+            {x: 280, y: 180, label: -1, id: 'I', color: '#ff4444'}, // Vi phạm margin
+            {x: 350, y: 120, label: -1, id: 'J', color: '#ff4444'}, // Bị phân sai
+        ];
+        
+        // Tham số đường phân chia (w*x + b = 0)
+        // Đường thẳng: y = -0.5x + 250
+        const w = [0.5, 1]; // vector pháp tuyến
+        const b = -250;
+        
+        function drawSVM() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Vẽ decision boundary (w*x + b = 0)
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(100, 200);
+            ctx.lineTo(500, 0);
+            ctx.stroke();
+            
+            // Vẽ margin boundaries (w*x + b = ±1)
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            
+            // Upper margin (w*x + b = 1)
+            ctx.beginPath();
+            ctx.moveTo(50, 175);
+            ctx.lineTo(450, -25);
+            ctx.stroke();
+            
+            // Lower margin (w*x + b = -1)  
+            ctx.beginPath();
+            ctx.moveTo(150, 225);
+            ctx.lineTo(550, 25);
+            ctx.stroke();
+            
+            ctx.setLineDash([]);
+            
+            // Vẽ các điểm
+            points.forEach(point => {
+                // Tính slack variable
+                const wx_b = w[0] * (point.x - 300) + w[1] * (400 - point.y) + b;
+                const margin_violation = 1 - point.label * wx_b;
+                const slack = Math.max(0, margin_violation);
+                
+                // Vẽ điểm
+                ctx.fillStyle = point.color;
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Vẽ label
+                ctx.fillStyle = '#000';
+                ctx.font = '12px Arial';
+                ctx.fillText(point.id, point.x + 12, point.y + 4);
+                
+                // Vẽ slack variable nếu > 0
+                if (slack > 0.01) {
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+                    ctx.font = '10px Arial';
+                    ctx.fillText(`ξ=${slack.toFixed(2)}`, point.x + 12, point.y + 16);
+                }
+                
+                // Lưu thông tin để hiển thị khi click
+                point.slack = slack;
+                point.wx_b = wx_b;
+                point.margin_violation = margin_violation;
+            });
+        }
+        
+        // Xử lý click để hiển thị thông tin
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Tìm điểm gần nhất
+            let minDist = Infinity;
+            let selectedPoint = null;
+            
+            points.forEach(point => {
+                const dist = Math.sqrt((x - point.x)**2 + (y - point.y)**2);
+                if (dist < 15 && dist < minDist) {
+                    minDist = dist;
+                    selectedPoint = point;
+                }
+            });
+            
+            if (selectedPoint) {
+                const p = selectedPoint;
+                let status = '';
+                if (p.slack === 0) {
+                    status = 'An toàn (không vi phạm)';
+                } else if (p.slack < 1) {
+                    status = 'Vi phạm margin (vẫn phân đúng)';
+                } else {
+                    status = 'Bị phân sai hoàn toàn';
+                }
+                
+                pointInfo.innerHTML = `
+                    <strong>Điểm ${p.id} (Class ${p.label > 0 ? '+1' : '-1'}):</strong><br>
+                    • w^T x + b = ${p.wx_b.toFixed(2)}<br>
+                    • y(w^T x + b) = ${(p.label * p.wx_b).toFixed(2)}<br>
+                    • Slack ξ = max(0, 1 - ${(p.label * p.wx_b).toFixed(2)}) = <strong>${p.slack.toFixed(2)}</strong><br>
+                    • Trạng thái: ${status}
+                `;
+            }
+        });
+        
+        drawSVM();
+    </script>
+</body>
+</html>
