@@ -1,4 +1,5 @@
 services:
+  # N8N Service
   n8n:
     image: n8nio/n8n:latest
     container_name: n8n-scraper
@@ -14,6 +15,50 @@ services:
       - N8N_SECURE_COOKIE=false
     volumes:
       - n8n_data:/home/node/.n8n
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  # Redis Service
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  # Ngrok Service
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok-tunnel
+    restart: unless-stopped
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+      - "4040:4040"  # ngrok web interface
+    environment:
+      - NGROK_AUTHTOKEN="30DKvug2r9crhfxWrzg73axfYMN_4i8MLRRi4rMcv2K5nYNXt"
+    depends_on:
+      - n8n
+    networks:
+      - app-network
+
 
 volumes:
   n8n_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
