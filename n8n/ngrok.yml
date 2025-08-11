@@ -1,0 +1,7 @@
+version: "2"
+authtoken: 30DKvug2r9crhfxWrzg73axfYMN_4i8MLRRi4rMcv2K5nYNXt
+
+tunnels:
+  n8n:
+    addr: n8n:5678
+    proto: http
