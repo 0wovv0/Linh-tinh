@@ -1,0 +1,232 @@
+jQuery(document).ready(function ($) {
+	circleTh = $(".step-join .wrap-images-view img");
+	circleDefault = $(".step-join .step-1 .wrap-images-view img");
+	/**
+	 * Carousel
+	 * */
+	owlStep = $(".step-carousel");
+	if (owlStep.length) {
+		owlStep.owlCarousel({
+			loop: false,
+			nav: false,
+			dots: true,
+			autoplay: false,
+			autoplayHoverPause: false,
+			margin: 15,
+			//onInitialized: checkNavArrows, // Check on init
+			//onTranslated: checkNavArrows, // Check every time a slide is changed
+			navText: ['<span aria-hidden="true" class="arrow_carrot-left"></span>', '<span aria-hidden="true" class="arrow_carrot-right"></span>'],
+			responsive: {
+				0: {
+					items: 1
+				},
+				541: {
+					items: 2,
+					mouseDrag: true,
+					touchDrag: true,
+					nav: false,
+				},
+				993: {
+					items: 2
+				},
+				1020: {
+					items: 4,
+					nav: false,
+					dots: false,
+					loop: false,
+					autoplay: false,
+					mouseDrag: false,
+					touchDrag: false
+				}
+			}
+		});
+		var maxHeight = 0;
+    
+			// Loop through each carousel item to find the maximum height
+		$('.step-carousel .item').each(function() {
+			var thisHeight = $(this).outerHeight();
+			if (thisHeight > maxHeight) {
+				maxHeight = thisHeight;
+			}
+		});
+
+		// Set each item's height to the maximum height
+		$('.step-carousel .item').css('height', maxHeight + 'px');
+
+	}
+	function checkNavArrows() {
+		var totalItems = owlStep.find('.owl-item').length; 
+		var currentIndex = owlStep.find('.active').first().index();
+
+		// Hide the previous arrow if we're on the first item
+		if (currentIndex === 0) {
+			owlStep.find('.owl-prev').addClass('hidden');
+		} else {
+			owlStep.find('.owl-prev').removeClass('hidden');
+		}
+		// Hide the next arrow if we're on the last item
+		if (currentIndex === totalItems - 2) {
+			owlStep.find('.owl-next').addClass('hidden');
+		} else {
+			owlStep.find('.owl-next').removeClass('hidden');
+		}
+	}
+	if ($(".qt-carousel").length) {
+		$('.qt-carousel').owlCarousel({
+			loop: true,
+			nav: false,
+			dots: false,
+			autoplay: false,
+			autoplayHoverPause: false,
+			autoplayTimeout: 1500,
+			margin: 25,
+			navText: ['<span aria-hidden="true" class="arrow_carrot-left"></span>', '<span aria-hidden="true" class="arrow_carrot-right"></span>'],
+			responsive: {
+				0: {
+					items: 1,
+					startPosition: 0,
+					autoplay: true,
+					dots: false,
+				},
+				541: {
+					items: 2,
+					startPosition: 0,
+					autoplay: true,
+					dots: true,
+					mouseDrag: true,
+					touchDrag: true
+					//nav: true,
+				},
+				993: {
+					items: 2,
+					dots: true,
+					autoplay: true,
+				},
+				1020: {
+					items:4,
+					nav: false,
+					dots: false,
+					loop: false,
+					autoplay: false,
+					mouseDrag: false,
+					touchDrag: false
+				}
+			}
+		});
+	}
+	
+	/***
+	* Menu Toggle 
+	*/
+	$('.wrap-bar').click(function(){
+		$('.main-menu').toggleClass("open");
+		$(this).toggleClass("active");
+		$(".green-bar").toggleClass("active");
+	});
+	$('body').on('click', '.close-menu', function(e){
+		$('.main-menu').removeClass("open");
+		return false;
+	});
+	/**
+	 * Modal
+	 */
+	closeButton = $(".close-popup, .btn-close-popup");
+
+	closeButton.click(function (event) {
+		$(".modal").removeClass("show");
+		$(".modal-backdrop").removeClass("show");
+		$("body").removeClass("no-scroll");
+		return false;
+	});
+	//$('.btn-quay-thuong').click(function(){
+	//	rollNow();
+	//	$('html, body').animate({
+	//		scrollTop: $("#section-top").offset().top
+	//	 }, 100);
+	//	$(".modal").removeClass("show");
+	//	$(".modal-backdrop").removeClass("show");
+	//	$("body").removeClass("no-scroll");
+	//	return false;
+	//});
+
+	/**
+	 * Popup
+	 */
+	$('body').on('click', '.open-popup', function(e){
+		const hash = $(this)[0].hash;
+		$(".modal").removeClass("show");
+		$(hash).addClass("show");
+		$(".modal-backdrop").addClass("show");
+		$("body").addClass("no-scroll");
+		return false;
+	});
+
+	//Logo
+	const nav_logo = document.getElementById("nav_logo");
+
+	if(nav_logo){
+		addEventListener("scroll", () => {
+			nav_logo.classList.toggle("onScroll", window.pageYOffset > 0);
+		}, false);
+	}
+	//Update Placeholder content search box
+	function updatePlaceholder() {
+		if(!$("#searchBox").length)
+			return false;
+
+		const input = document.getElementById('searchBox');
+		const txt = window.innerWidth > 992 ? 'Vui lòng nhập số điện thoại cần tra cứu' : 'Số điện thoại cần tra cứu';
+		input.placeholder = txt;
+	}
+
+	updatePlaceholder();
+
+	window.addEventListener('resize', updatePlaceholder);
+});
+
+//Select City District
+//var citis = document.getElementsByClassName("city");
+//if(citis && citis.length){
+//	var Parameter = {
+//		url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+//		crossOrigin: null,
+//		method: "GET", 
+//		responseType: "application/json", 
+//	  };
+//	  var promise = axios(Parameter);
+	  
+//	  promise.then(function (result) {
+//		if(citis.length)
+//		for (var i=0; i<citis.length; i++) {
+//			district = citis[i].parentElement.parentElement.getElementsByClassName("district");
+//			//console.log(district[0]);
+//			renderCity(result.data, citis[i], district[0]);
+//		}
+		
+//	});
+//}
+
+//function renderCity(data, ct, dt) {
+//  for (const x of data) {
+//	var opt = document.createElement('option');
+//	 opt.value = x.Name;
+//	 opt.text = x.Name;
+//	 opt.setAttribute('data-id', x.Id);
+//	 ct.options.add(opt);
+//  }
+//  if(dt)
+//  ct.onchange = function () {
+//    dt.length = 1;
+//    if(this.options[this.selectedIndex].dataset.id != ""){
+//      const result = data.filter(n => n.Id === this.options[this.selectedIndex].dataset.id);
+
+//      for (const k of result[0].Districts) {
+//		var opt = document.createElement('option');
+//		 opt.value = k.Name;
+//		 opt.text = k.Name;
+//		 opt.setAttribute('data-id', k.Id);
+//		 dt.options.add(opt);
+//      }
+//    }
+//  };
+//}
