@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Mời Tốt Nghiệp</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <div class="background"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="graduation-icon">🎓</div>
+            <h1 class="title">THIỆP MỜI TỐT NGHIỆP</h1>
+            <p class="subtitle">Cột mốc đáng nhớ để cùng nhau chia sẻ</p>
+        </header>
+
+        <div class="photo-section">
+            <div class="photo-container">
+                <div class="photo" id="photo-display">
+                    <img src="IMG.jpg" alt="Ảnh Tốt Nghiệp" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+            </div>
+        </div>
+
+        <main class="main-content animate-on-scroll">
+            <h2 class="graduate-name">PHẠM VIỆT HÙNG</h2>
+            
+            <div class="details-grid">
+                <div class="detail-card animate-on-scroll animate-delay-1">
+                    <span class="detail-icon">📅</span>
+                    <div class="detail-title">NGÀY</div>
+                    <div class="detail-content">Thứ bảy, ngày 27-9-2025</div>
+                </div>
+                
+                <div class="detail-card animate-on-scroll animate-delay-2">
+                    <span class="detail-icon">⏰</span>
+                    <div class="detail-title">THỜI GIAN</div>
+                    <div class="detail-content">14:00 - Unknow</div>
+                </div>
+                
+                <div class="detail-card animate-on-scroll animate-delay-3">
+                    <span class="detail-icon">📍</span>
+                    <div class="detail-title">ĐỊA ĐIỂM</div>
+                    <div class="detail-content">ĐH Bách Khoa Hà Nội<br>Tòa C2</div>
+                </div>
+                
+                <div class="detail-card animate-on-scroll animate-delay-4">
+                    <span class="detail-icon">🎯</span>
+                    <div class="detail-title">CHUYÊN NGÀNH</div>
+                    <div class="detail-content">KHOA HỌC MÁY TÍNH<br></div>
+                </div>
+            </div>
+
+            <div class="message animate-on-scroll">
+                Cuối cùng cũng xong :))) 🎉 Sau 4 năm học tập và rèn luyện, quãng thời gian tưởng dài mà như cái chớp mắt. Mới hôm nào thức đêm ôn thi, ngủ quên cả đi thi mà giờ đã ra trường rồi 😭😭 tự nhiên khi viết mấy dòng này thấy yêu trường ghê 🥹🥹,mà thôi kệ đi giờ đây mình đã chính thức tốt nghiệp. Không thể thiếu bạn trong ngày đặc biệt này được! Hãy đến chung vui cùng mình nhé :v
+            </div>
+
+            <div class="rsvp-section animate-on-scroll">
+                <h3 class="rsvp-title">🌟 XÁC NHẬN THAM DỰ 🌟</h3>
+                <div class="rsvp-buttons">
+                    <button class="rsvp-button accept" onclick="showRSVPModal()">
+                        ✅ Tôi sẽ tham dự!
+                    </button>
+                    <button class="rsvp-button decline" onclick="regretAttendance()">
+                        😔 Rất tiếc không thể đến
+                    </button>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="contact-title">📞 THÔNG TIN LIÊN HỆ</div>
+                    <div class="contact-item">📱 Điện thoại: 0971904033</div>
+                    <div class="contact-item">📘 Facebook: <a href="https://www.facebook.com/Hung.LearningAI" target="_blank" style="color: #4267B2; text-decoration: none;">Phạm Việt Hùng</a></div>
+                    <div class="contact-item" style="margin-top: 15px; font-style: italic; color: #4ecdc4;">
+                        ⏰ Vui lòng xác nhận trước ngày 20/09/2025
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Phần danh sách khách -->
+        <div class="guest-list-section animate-on-scroll">
+            <h3 class="guest-list-title">
+                👥 DANH SÁCH KHÁCH MỜI 
+                <span class="guest-count" id="guest-count">0</span>
+            </h3>
+            <div id="guest-list" class="guest-grid">
+                <div class="no-guests">
+                    <p>🎭 Ủa không ai đi à trời =))))</p>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Hãy là người đầu tiên!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="quote animate-on-scroll">
+            "Tốt nghiệp không phải là kết thúc của một giai đoạn, mà là khởi đầu 
+            của những hành trình mới đầy hứa hẹn phía trước - FROM CHATGPT =)))))"
+        </div>
+
+        <div class="signature animate-on-scroll">
+            Trân trọng kính mời! 💝
+        </div>
+    </div>
+
+    <!-- Hộp thoại xác nhận tham dự -->
+    <div id="rsvp-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRSVPModal()">&times;</span>
+            <h2>🎉 Xác Nhận Tham Dự</h2>
+            <form id="rsvp-form" onsubmit="submitRSVP(event)">
+                <div class="form-group">
+                    <label for="guest-name">Tên của bạn *</label>
+                    <input type="text" id="guest-name" name="guestName" required placeholder="Nhập tên đầy đủ của bạn">
+                </div>
+                
+                <div class="form-group">
+                    <label for="guest-phone">Số điện thoại</label>
+                    <input type="tel" id="guest-phone" name="guestPhone" placeholder="Số điện thoại liên hệ (tùy chọn)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="guest-note">Lời nhắn</label>
+                    <textarea id="guest-note" name="guestNote" rows="3" placeholder="Để lại lời chúc hoặc ghi chú (tùy chọn)"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-button">
+                    ✨ Xác Nhận Tham Dự
+                </button>
+            </form>
+        </div>
+    </div>
+
+  <script type="module" src="scripts.js"></script>
+
+</body>
+</html>

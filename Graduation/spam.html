@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Spam 20 Guests</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+  <h3>Seeding 20 guests into Firestore…</h3>
+  <pre id="log"></pre>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const logEl = document.getElementById("log");
+    const log = (m)=>{ console.log(m); logEl.textContent += m + "\n"; };
+
+    // ==== Firebase config (dán của bạn vào đây) ====
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCaeJQf-MJEY1uJE7i2g2lNvBxR0iutb0",
+      authDomain: "graduation-hust.firebaseapp.com",
+      projectId: "graduation-hust",
+      storageBucket: "graduation-hust.appspot.com",
+      messagingSenderId: "919618677213",
+      appId: "1:919618677213:web:bfcc8c6ee16ebe1f52ae34",
+      measurementId: "G-MWLBEL4F74"
+    };
+
+    // ==== Init & Firestore ====
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // Helper: format timestampDisplay (hh:mm dd/MM/yyyy)
+    function formatDisplay(date) {
+      const pad = (n)=> n.toString().padStart(2,'0');
+      return `${pad(date.getHours())}:${pad(date.getMinutes())} ${pad(date.getDate())}/${pad(date.getMonth()+1)}/${date.getFullYear()}`;
+    }
+
+    async function seed() {
+      try {
+        for (let i = 1; i <= 20; i++) {
+          const now = new Date();
+          const data = {
+            name: `Guest ${i}`,
+            nameLowerCase: `guest ${i}`.toLowerCase(),
+            note: `Note for guest ${i}`,
+            phone: Math.floor(1000000000 + Math.random()*9000000000).toString(), // random 10 số
+            timestamp: now.toISOString(),
+            timestampDisplay: formatDisplay(now)
+          };
+          await setDoc(doc(db, "guests", `guest${i}`), data);
+          log(`Added: guest${i}`);
+        }
+        log("🎉 Done! Check Firestore → collection 'guests'.");
+      } catch (e) {
+        log("❌ Error: " + (e?.message || e));
+      }
+    }
+
+    seed();
+  </script>
+</body>
+</html>
